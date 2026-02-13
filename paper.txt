@@ -1,0 +1,1942 @@
+OXFORD BULLETIN OF ECONOMICS AND STATISTICS, 85, 3 (2023) 0305-9049
+doi: 10.1111/obes.12540
+
+Real-Time Monitoring of Bubbles and Crashes
+EMILY J. WHITEHOUSE,† DAVID I. HARVEY‡ and STEPHEN J.
+LEYBOURNE‡
+†Department of Economics, University of Sheffield, Sheffield, S1 4DT, UK (e-mail:
+e.whitehouse@sheffield.ac.uk)
+‡School of Economics, University of Nottingham, Nottingham, NG7 2RD, UK
+
+Abstract
+Given the financial and economic damage that can be caused by the collapse of an asset
+price bubble, it is of critical importance to rapidly detect the onset of a crash once a
+bubble has been identified. We develop a real-time monitoring procedure for detecting
+a crash episode in a time series. We adopt an autoregressive framework, with bubble
+and crash regimes modelled by explosive and stationary dynamics, respectively. The first
+stage of our approach is to monitor for a bubble; conditional on which, we monitor for a
+crash in real time as new data emerges. Our crash detection procedure employs a statistic
+based on the different signs of the means of the first differences associated with explosive
+and stationary regimes, and critical values are obtained using a training period of data.
+We show that the procedure has desirable asymptotic properties in terms of its ability
+to rapidly detect a crash while never indicating a crash earlier than one occurs. Monte
+Carlo simulations further demonstrate that our procedure can offer a well-controlled false
+positive rate during a bubble regime. Application to the US housing market demonstrates
+the efficacy of our procedure in rapidly detecting the house price crash of 2006.
+
+I. Introduction
+Asset price bubbles and crashes are a prevalent feature in economic and financial markets,
+with notable examples including the Dot-com bubble in technology stock prices in the late
+1990s, the sub-prime mortgage bubble in the US housing market in the mid-2000s, and,
+more recently, the presence of bubbles in cryptocurrencies. The collapse of the sub-prime
+mortgage bubble, in particular, illustrated how devastating the emergence and collapse of
+asset price bubbles can be, not just for the asset market in which the bubble occurs, but
+for the global economy as a whole. The quicker that policy makers are alerted to the onset
+of a crash, the quicker they can respond to mitigate the effects of that crash. Developing
+early detection tools that can provide warning signals of such an event are therefore of
+critical importance. In this paper we propose a real-time monitoring procedure for the
+crash of an asset price bubble in order to provide this fast detection.
+JEL Classification numbers: C12, C22, G01.
+
+482
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+This is an open access article under the terms of the Creative Commons Attribution License, which permits use, distribution and
+reproduction in any medium, provided the original work is properly cited.
+
+483
+
+Much of the econometric literature concerning the identification of bubbles and
+crashes has focused on historical detection, where a bubble episode has emerged and
+then terminated within a sample of observed data. The focus of this literature has been
+primarily on rational bubbles, where the price of an asset diverges from the underlying
+fundamental value of that asset, yet investors continue to purchase the asset due to an
+expectation that prices will grow beyond the price paid. In a rational bubble framework,
+an asset price bubble is present if explosive behaviour is observed in the price series
+of an asset but not in the corresponding fundamental values. Modelling asset price
+bubbles as explosive autoregressive processes, Phillips, Wu, and Yu (2011) propose the
+use of sub-sample right-tailed augmented Dickey–Fuller unit root tests, implemented
+recursively, to distinguish between a process which is unit root across a full sample period
+or instead exhibits a single episode of temporary explosiveness at some point in that
+period. Phillips, Shi, and Yu (2015) subsequently extend this recursive unit root testing
+approach to consider the detection of multiple bubble episodes. Further developments
+in the econometric detection of explosive bubbles have considered, inter alia, CUSUMbased procedures (Homm and Breitung, 2012), bootstrap implementations of recursive
+unit root test procedures (Harvey et al., 2016; Phillips and Shi, 2020) and the use of
+Generalised Least Squares-based recursive unit root testing (Whitehouse, 2019). These
+techniques have been employed in the empirical literature to detect past bubble episodes
+in a wide range of asset markets such as stocks (Caspi and Graham, 2018; Hu and
+Oxley, 2018; Basse et al., 2021), housing (Anundsen et al., 2016; Pavlidis, Paya, and
+Peel, 2018; Anundsen, 2019), commodities (Etienne, Irwin, and Garcia, 2014; Etienne,
+Irwin, and Garcia, 2015; Figuerola-Ferretti and McCrorie, 2016), and cryptocurrencies
+(Corbet, Lucey, and Yarovaya, 2018; Gronwald, 2021).
+Determining the presence and timing of historical asset bubbles provides useful
+information for empirical researchers, allowing for a more rigorous analysis of the
+timeline and determinants of bubble behaviour. However, from a policy perspective, the
+detection of ongoing bubbles in a real-time monitoring exercise is of clear interest. Astill
+et al. (2017) examine the possibility of detecting an end-of-sample bubble. That is, a
+bubble which has emerged close to the end of an observed sample period of data and
+is still ongoing at the end of the sample. Their procedure requires the application of a
+test statistic to a finite number of end-of-sample observations, where critical values are
+obtained through sub-sampling of the test statistic throughout the remainder of the sample.
+The test statistic used is motivated by a Taylor series expansion of the first differences
+of an explosive process. The advantage of this methodology is that as the critical values
+are obtained from the data itself, the test procedure is robust to serial correlation and
+conditional heteroskedasticity in the data.
+The Astill et al. (2017) approach provides a method for conducting a one-shot test
+for an end-of-sample bubble. If no bubble is detected through such a procedure, it may
+then be of interest to repeatedly test for the presence of a bubble as new data observations
+are released. We refer to this repeated testing every time a new data point is observed as
+real-time monitoring. Inherent in real-time monitoring is the multiple testing problem, in
+which repeated application of the same test statistic as each new observation is realised
+can lead to an empirical size for the procedure far beyond the theoretical size of a one-off
+application of the test statistic. Astill et al. (2018) (AHLST) therefore propose a real-time
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+monitoring procedure, based on the test statistic of Astill et al. (2017), but implemented
+in such a way that the false positive rate (FPR) for bubble detection (i.e. the probability
+of false detection at each point of monitoring) can be determined at any point in the
+monitoring horizon. Specifically, test statistics are computed over rolling sub-samples of
+fixed length within a training period, with the maximum test statistic within this training
+period forming the critical value to which monitoring statistics, computed using the most
+recent data available, are compared. Such an approach also allows the practitioner to set a
+maximum monitoring horizon to ensure that the FPR never exceeds some specified level.
+Monte Carlo simulation results demonstrate that the AHLST 2017 real-time monitoring
+procedure delivers FPRs close to their theoretical level in finite samples, and offers rapid
+detection of explosive bubbles.
+An equally important issue to real-time detection of the emergence of a bubble is
+real-time monitoring for the subsequent termination of that bubble in the form of a crash.
+In the context of detecting historical crash episodes, Harvey, Leybourne, and Sollis (2017)
+and Phillips and Shi (2018) model the crash regime as a stationary autoregressive process
+that immediately follows the explosive autoregressive bubble phase. In this paper, we
+propose a real-time monitoring procedure for stationary crashes, with our procedure
+conditional on having first detected the presence of a bubble. Our procedure relies on
+the sequential application of a new test statistic for the detection of a crash, motivated
+by the differing signs of the means of the first differences of explosive and stationary
+processes. The test statistic is constructed in such a way that a user-chosen parameter
+offers practitioners the choice to potentially introduce a degree of detection delay in order
+to reduce the FPR of crash detection. We follow AHLST 2017 in computing sub-sample
+test statistics over a training period, although it is now the minimum of these training
+sample statistics which forms our critical value to which monitoring statistics for crash
+detection are compared. We rely on AHLST 2017 for bubble detection, such that we begin
+monitoring for a crash conditional on first detecting an explosive bubble. We show that
+our crash monitoring procedure has desirable asymptotic properties in terms of its ability
+to rapidly detect a crash regime while never indicating a crash earlier than one occurs.
+Monte Carlo simulations demonstrate that our recommended crash monitoring procedure
+can offer a well-controlled FPR in finite samples, while also allowing rapid detection
+of a crash.
+Once a crash has been detected by our procedure, it may be the case that, rather
+than ending the monitoring exercise, a practitioner wishes to continue monitoring for
+the possible emergence of subsequent bubble episodes. We therefore also propose an
+extension of our monitoring procedure to the multiple bubble case, where, after detection
+of a crash regime, bubble monitoring then resumes. Simulation results show that our
+procedure is effective also in this multiple regime context, delivering good FPR control
+and rapid detection of multiple explosive bubble and stationary collapse regimes.
+The usefulness of our proposed crash monitoring procedure is demonstrated through
+an empirical application of the procedure to the US house price to rent ratio. In a pseudo
+real-time monitoring exercise, we begin our monitoring in 1998:Q1, with detection of an
+explosive bubble occurring in 2000:Q1 and subsequent detection of a stationary crash
+occurring in 2006:Q2, thus providing timely detection of changes in the dynamics of the
+US housing market.
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+484
+
+485
+
+In the next section we present a bubble and crash model and introduce the hypotheses
+of interest. Section III describes the AHLST 2017 real-time monitoring procedure for
+bubbles. In section IV we outline our crash monitoring procedure and establish asymptotic
+results for its behaviour under the alternative hypothesis of interest. Monte Carlo simulation
+results are presented in section V. Section VI discusses the extension of our proposed
+procedure to multiple bubble and crash episodes. In section VII we provide an application
+of our real-time monitoring procedure to the US housing market. Section VIII concludes.
+Proofs are contained in Appendices. We adopt the following notation: ‘.’ denotes the
+integer part, ‘I(.)’ denotes the indicator function, and we use the order notation O+
+p (.) to
+imply that the term concerned is positive.
+
+II. The model and real-time monitoring framework
+We consider the following DGP for a time series yt , t = 1, ..., T, which represents prices
+(or prices relative to fundamentals):
+y t = μ + ut ,
+⎧
+u + εt
+⎪
+⎪
+⎨ t−1
+(1 + δ1 )ut−1 + εt
+ut =
+(1
+− δ2 )ut−1 + εt
+⎪
+⎪
+⎩
+ut−1 + εt
+
+t = 2, ..., τ1 T
+t = τ1 T + 1, ..., τ2 T
+t = τ2 T + 1, ..., τ3 T
+t = τ3 T + 1, ..., T,
+
+(1)
+
+(2)
+
+with u1 = Op (1), δ1 > 0 and 1 ≥ δ2 > 0. We assume the error term εt is a strictly
+stationary, possibly conditionally heteroskedastic, process with zero mean.
+In the context of (1) and (2), if τ1 = 1 then yt admits a unit autoregressive root
+throughout the sample period. If τ1 < 1, then the yt process changes at time τ1 T from unit
+root to explosive autoregressive dynamics (with explosive offset δ1 ), providing a model
+1/2
+),
+of bubble behaviour. In this case we assume that uτ1 T > 0, such that uτ1 T = O+
+p (T
+ensuring that the explosive regime has an upwards (rather than downwards) trajectory, in
+line with typical bubble behaviour. If τ2 = 1 the explosive regime is ongoing at the end
+of the sample, while if τ2 < 1 the explosive behaviour terminates at time τ2 T. After
+the explosive regime terminates, the process switches into a stationary collapse regime
+(with stationary offset δ2 ), which acts as a model for a post-bubble crash. The stationary
+collapse regime runs to time τ3 T, at which point, provided τ3 < 1, unit root behaviour
+resumes. 1
+Our focus is on real-time monitoring first for an explosive regime, and then, conditional
+on detecting such explosive behaviour, monitoring for a stationary collapse. In the first
+stage, we therefore wish to distinguish between the hypotheses:
+(unit root)
+H0(1) : τ1 = 1
+H1(1) : τ1 < τ2 ≤ 1 (unit root then explosive, with or without stationary collapse)
+1 An additional possibility at the end of the explosive regime is for the process to return directly to unit root
+behaviour without collapse, i.e. τ2 = τ3 < 1. However, given that bubbles almost invariably terminate in collapse,
+we focus our main attention on the τ2 < τ3 case, such that a stationary collapse regime follows the termination of
+explosive behaviour.
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+Conditional on having rejected H0(1) in favour of H1(1) , in the second stage we then assume
+H1(1) is true and proceed to distinguish between the following sub-hypotheses of H1(1) :
+H0(2) : τ1 < τ2 = 1 (unit root then explosive without stationary collapse)
+H1(2) : τ1 < τ2 < 1 (unit root then explosive with stationary collapse)
+The real-time monitoring framework we adopt follows AHLST and considers y1 , ..., yT ∗ ,
+T ∗ = λT ≤ τ1 T for some λ ∈ (0, 1), as a training period, during which it is assumed
+that no explosive behaviour is present, i.e. T ∗ ≤ τ1 T. We will subsequently consider
+monitoring from some time period T † onwards, employing the training period data in a
+calibration role. The first stage involves monitoring for a change from H0(1) to H1(1) , so as
+to detect the onset of an explosive regime. Once an explosive regime has been detected,
+the second stage involves subsequent monitoring for a change from H0(2) to H1(2) , in order
+to detect the termination of explosive behaviour and the start of a stationary collapse
+regime.
+
+III. Monitoring for an explosive regime
+Several approaches to testing between H0(1) and H1(1) , i.e. testing for a period of temporary
+explosiveness, have been developed in the literature. While the majority of these
+approaches focus on historical detection, some recent developments have emerged to
+deal with real-time monitoring for explosive episodes. In particular, AHLST develop a
+real-time monitoring procedure based on the Astill et al. (2017) test for an end-of-sample
+explosive regime, which in turn is based on the instability tests of Andrews (2003)
+and Andrews and Kim (2006). In Astill et al. (2017), a test statistic designed to detect
+explosive behaviour is computed over a finite-sized window of observations at the end of
+the sample period, and compared to a critical value obtained from computing the same
+statistic repeatedly over sub-samples of the previous observations. This sub-sampling
+approach has the desirable feature that the test is robust to conditional heteroskedasticity
+and serial correlation, while robustness to unconditional heteroskedasticity is delivered
+through a White-type correction in the test statistic. AHLST adapt this approach to the
+real-time monitoring context by comparing test statistics computed from rolling finitesized windows in the monitoring period with the maximum of the statistics computed over
+sub-samples in the training period.
+The test statistic that Astill et al. (2017) employ is motivated by a Taylor series
+expansion of the first differences yt during the explosive regime, and essentially
+amounts to testing for the presence of an upward trend in yt . Letting k denote the chosen
+window width over which the statistic is computed, and e the last observation used in the
+statistic’s calculation, the statistic is given by
+e
+(t − e + k)yt
+Ae,k =  t=e−k+1
+.
+e
+2
+t=e−k+1 {(t − e + k)yt }
+The real-time monitoring procedure of AHLST then proceeds as follows. Suppose that
+we wish to start monitoring for a bubble at the present time period, t = T † . We let
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+486
+
+487
+
+t = 1, ..., T ∗ form an initial training sample, where T ∗ = T † − k. The Ae,k statistic is
+computed over rolling sub-samples of length k within this training sample, producing a
+set of training sample statistics. The maximum training sample statistic, which we denote
+by A∗max = maxe∈[k+1,T ∗ ] Ae,k , forms the critical value for the monitoring procedure.
+Beginning at time t = T † , the first monitoring statistic is computed using data from
+time periods t = T † − k + 1, ..., T † = T ∗ + 1, ..., T ∗ + k, then subsequent monitoring
+statistics are computed as each new observation occurs, rolling forwards the window of
+k observations (e.g. the second monitoring statistic is computed at time t = T † + 1 using
+data from t = T † − k + 2, ..., T † + 1). Detection of an explosive regime is triggered at
+the first point where a monitoring statistic Ae,k , e = T † , T † + 1, ..., exceeds the critical
+value A∗max . At an arbitrary point in the monitoring period, t = e, we can then write the
+monitoring decision rule as:
+Detect H1(1) at time e if Ae,k > A∗max .
+
+(3)
+
+The time period at which an explosive regime is detected is then denoted t = T  . AHLST
+discuss how the FPR of such a procedure can be controlled, and we formalise this in
+Theorem 1 below. Hereafter, we refer to this explosive regime monitoring procedure as
+AMAX (k).
+We now establish the theoretical FPR of the AMAX (k) procedure under H0(1) as T → ∞,
+where we assume that monitoring has been run to some point T , and that T ∗ and T are
+such that T ∗ = λ1 T and T = λ2 T, where 0 < λ1 < λ2 ≤ 1. This is done by observing
+that the decision rule in (3) is equivalent to determining whether the maximum of the
+monitoring statistics Ae,k , e = T † , T † + 1, ..., T , exceeds the corresponding maximum
+statistic over the training period A∗max . Evaluating the limiting probabilities of these
+exceedances under H0(1) gives the result of the following theorem.
+Theorem 1. Under H0(1) and assuming that {εt } satisfies the mixing conditions of
+Ferreira and Scotto (2002, p. 476), then as T → ∞,
+
+max Ae,k > max ∗ Ae,k = α,
+lim P
+T→∞
+
+e∈[T ∗ +k,T ]
+
+
+
+where
+α = lim
+
+T→∞
+
+T − T∗ − k + 1
+T − 2k + 1
+
+e∈[k+1,T ]
+
+
+= lim
+
+T→∞
+
+T − T∗
+.
+T
+
+∗
+
+For given values of T and k, we can use the result in Theorem 1 to approximate the
+empirical FPR that would be obtained in practice for any monitoring point T , i.e.
+α≈
+
+T − T∗ − k + 1
+.
+T − 2k + 1
+
+(4)
+
+We can also rearrange (4) to identify the monitoring time period T at which the FPR of
+the procedure will (approximately) reach the level α, allowing us to determine how far
+one can monitor into the future whilst maintaining a chosen FPR:
+T ≈
+
+T ∗ + k − 1 − α(2k − 1)
+.
+1−α
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+IV. Monitoring for a stationary collapse regime
+Our main focus in this paper is on the second stage monitoring where, given prior detection
+of an explosive regime, the aim is to detect the termination of explosive behaviour and the
+onset of a stationary collapse regime. We now motivate a test statistic for distinguishing
+between H0(2) and H1(2) , with the aim of using this statistic to monitor for a collapse using a
+similar approach to the AMAX (k) procedure for monitoring explosive behaviour. Consider
+first the model (1) and (2) expressed in first differences:
+⎧
+ε
+⎪
+⎪
+⎨ t
+δ u + εt
+yt = 1 t−1
+−
+δ2 ut−1 + εt
+⎪
+⎪
+⎩
+εt
+
+t = 2, ..., τ1 T
+t = τ1 T + 1, ..., τ2 T
+.
+t = τ2 T + 1, ..., τ3 T
+t = τ3 T + 1, ..., T
+
+Next consider the observations in the immediate neighbourhood of the explosive regime
+endpoint τ2 T. Specifically, for a finite number m of observations on yt up to τ2 T,
+and for a finite number n of observations on yt immediately after τ2 T, we can use the
+autoregressive recursion to write
+⎧
+δ1 (1 + δ1 )t−(τ2 T−m)−1 uτ2 T−m
+⎪
+⎪
+⎨ t−(τ2 T−m)−1
++ i=0
+δ1 (1 + δ1 )i−1 εt−i + εt
+yt =
+t−τ2 T−1
+uτ2 T
+−δ2 (1 − δ2 )
+⎪
+⎪
+⎩ 
+t−τ2 T−1
+− i=1
+δ2 (1 − δ2 )i−1 εt−i + εt
+
+t = τ2 T − m + 1, ..., τ2 T
+. (5)
+t = τ2 T + 1, ..., τ2 T + n
+
+For t = τ2 T − m + 1, ..., τ2 T, for finite m, δ1 (1 + δ1 )t−(τ2 T−m)−1 uτ2 T−m is of
+the same order as uτ2 T−m , which is also of the same order as uτ2 T ; then,
+1/2
+from lemma 1(i) of Harvey et al. (2017), it follows that uτ2 T = Op (ST ), where
+ST = τ1 T(1 + δ1 )2(τ2 T−τ1 T) , and hence
+1/2
+
+δ1 (1 + δ1 )t−(τ2 T−m)−1 uτ2 T−m = Op (ST ).
+
+(6)
+
+t−(τ T−m)−1
+Next, i=0 2
+δ1 (1 + δ1 )i−1 εt−i + εt = Op (1) since we have a finite sum of Op (1)
+variates, and so the term in (6) dominates. Similarly, for t = τ2 T + 1, ..., τ2 T + n and
+finite n, lemma 1(i) of Harvey et al. (2017) gives
+1/2
+
+δ2 (1 − δ2 )t−τ2 T−1 uτ2 T = Op (ST ),
+
+(7)
+
+t−τ T−1
+δ2 (1 − δ2 )i−1 εt−i + εt = Op (1), so that (7) dominates over this second
+and i=1 2
+time period. In each regime, therefore, the first terms in (5) dominate the stochastic
+behaviour of yt . Finally, for δ1 and δ2 close to zero, taking the first term of a Taylor
+expansion with respect to δ1 and δ2 , respectively, yields the following approximations:
+δ1 (1 + δ1 )t−(τ2 T−m)−1 uτ2 T−m ≈ δ1 uτ2 T−m t = τ2 T − m + 1, ..., τ2 T
+.
+δ2 (1 − δ2 )t−τ2 T−1 uτ2 T ≈ δ2 uτ2 T
+t = τ2 T + 1, ..., τ2 T + n
+
+(8)
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+488
+
+489
+
+This allows yt in the neighbourhood of τ2 T to be expressed as
+yt =
+
+β1 + ηt t = τ2 T − m + 1, ..., τ2 T
+,
+β2 + ηt t = τ2 T + 1, ..., τ2 T + n
+
+(9)
+
+where β1 = δ1 uτ2 T−m , β2 = −δ2 uτ2 T and ηt generically denotes an error containing
+the approximation errors in (8) and the lower order Op (1) terms in (5).
+Given the presence of an explosive regime (δ1 > 0), the onset of a stationary collapse
+(δ2 > 0) implies a change in the mean of yt from a positive value β1 to a negative value
+β2 at time τ2 T + 1. If we consider simple OLS estimators of β1 and β2 over the two
+respective sub-samples given in (9), i.e.:
+τ2 T
+
+−1
+
+β̂ 1 = m
+
+yt ,
+t=τ2 T−m+1
+
+β̂ 2 = n−1
+
+τ2 T+n
+
+yt ,
+t=τ2 T+1
+
+then we can motivate a statistic for detecting a change from explosive to stationary
+collapse behaviour at time τ2 T + 1 as one based on the sign of the product β̂ 1 β̂ 2 .
+In the monitoring context, where the putative collapse change point is unknown, we
+can consider the following statistic indexed by the last observation used in the statistic’s
+calculation, again denoted e:
+Ne,m,n = m−1
+
+e−n
+
+yt
+t=e−n−m+1
+
+n−1
+
+e
+
+yt ,
+t=e−n+1
+
+i.e. β̂ 1 β̂ 2 with e − n replacing τ2 T. This statistic is therefore suitable for monitoring for
+a collapse that begins at time t = e − n + 1.
+We next consider introducing a variance standardization to imbue Ne,m,n with a degree of
+robustness to possible changes in the unconditional variance of the errors εt ; such changes
+are formally excluded from our assumptions but may of course occur in practice. We
+propose standardizing the components of Ne,m,n by error variance estimates obtained over
+the respective sub-samples t = e − n − m + 1, ..., e − n and t = e − n + 1, ..., e. For the
+sub-sample t = e − n − m + 1, ..., e − n, given the first-order autoregressive
+structure of
+e−n
+−1
+2
+the model given in (1) and (2), we consider the error variance estimator m
+t=e−n−m+1 ε̂ t
+where the ε̂ t are OLS residuals obtained from a regression of yt on a constant and yt−1 ,
+over the sub-sample t = e − n − m + 1, ..., e − n. For the sub-sample t = e − n + 1, ..., e,
+we will below advocate use of very small values of n in the monitoring procedure, hence a
+regression-based error variance estimator
+is impractical. Instead, we propose the simpler
+(1)
+e
+−1
+2
+H0 -based error variance estimator n
+t=e−n+1 (yt ) . Standardizing Ne,m,n by these
+two error variance estimators results in the following statistic:
+ −1 e−n
+  −1 e
+
+m
+t=e−n−m+1 yt n
+t=e−n+1 yt
+.
+
+
+
+e
+2
+−1
+2
+n
+m−1 e−n
+ε̂
+(y
+)
+t
+t
+t=e−n−m+1
+t=e−n+1
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+Note that the m−1 and n−1 constants are not needed in the monitoring procedure
+that follows, since such constant scalings apply for all e and become redundant when
+comparing training and monitoring period statistics. Consequently, our proposed statistic
+for monitoring for a stationary collapse that begins at time t = e − n + 1 is given by:
+e−n
+
+t=e−n−m+1 yt
+
+Se,m,n = 
+
+e
+
+t=e−n+1 yt
+
+e
+e−n
+2
+2
+t=e−n−m+1 ε̂ t
+t=e−n+1 (yt )
+
+.
+
+(10)
+
+The real-time monitoring for collapse procedure we propose proceeds as follows,
+mirroring the AHLST procedure described above. First, the Se,m,n statistic is computed
+over the training sample t = 1, ..., T ∗ for all possible rolling sub-samples of length m + n,
+and the critical value to be used in monitoring is set to the minimum of these training
+∗
+sample statistics, denoted Smin
+. As we are only concerned with monitoring for a collapse
+following detection of a prior explosive regime, we now consider the situation where
+monitoring using the AMAX (k)procedure has signalled the presence of an explosive regime
+at some time period t = T  . Conditional on this finding, we then switch to monitoring
+for a stationary collapse regime by computing the Se,m,n statistic on a rolling basis for
+e = T  + 1, T  + 2, .... Detection of a collapse regime is triggered at the first point where
+∗
+a monitoring statistic Se,m,n falls below the critical value Smin
+. At an arbitrary point in the
+collapse monitoring period, t = e, we can then write the monitoring decision rule as:
+∗
+Detect H1(2) at time e if Se,m,n < Smin
+.
+
+(11)
+
+We refer to this stationary collapse monitoring procedure as SMIN (m, n).
+The FPR of the SMIN (m, n) procedure is more difficult to establish compared to the
+AMAX (k) procedure for explosive regime detection, since monitoring using SMIN (m, n) is
+only performed following detection of an explosive regime by AMAX (k). When SMIN (m, n)
+is conducted and H0(1) is true, it follows that the explosive regime detection signalled
+by AMAX (k) was false, and hence the FPR of SMIN (m, n) is bounded by the FPR of
+AMAX (k) at the point t = T  (where explosive behaviour was erroneously detected).
+When SMIN (m, n) is conducted and H1(1) is true, which is the main case of interest, the
+AMAX (k) explosive regime detection at time t = T  was correct, and the FPR of the
+subsequently implemented SMIN (m, n) procedure is bounded by the true positive rate of
+AMAX (k) at time t = T  . Under H0(2) , when monitoring for a collapse at a point e that is
+O(T) observations into the explosive regime, i.e. e − τ1 T = O(T), then the explosive
+properties of the process are dominant and a result similar to Theorem 2(a) below can be
+∗
+obtained to show that limT→∞ Pr (Se,m,n < Smin
+) = 0, i.e. the limit probability of spurious
+collapse detection by Se,m,n is zero at this point. However, given that an explosive regime
+can be detected by the AMAX (k) procedure after only a finite number of monitoring periods,
+we cannot assume that monitoring for a collapse will only be done from a point that can
+be considered O(T) observations into the explosive regime. As such, establishing a result
+∗
+for Pr (Se,m,n < Smin
+) in this case, and consequently a result for the FPR associated with
+SMIN (m, n), is not tractable, since it will inevitably depend on DGP parameters such as
+the magnitude of the explosive autoregressive parameter and the duration of the explosive
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+490
+
+491
+
+regime. Consequently, it is not possible to quantify analytically the FPR of the SMIN (m, n)
+procedure under H0(2) for an arbitrary monitoring point e. Instead we examine the FPR of
+SMIN (m, n) by simulation in the next section for a range of DGP settings.
+In the following theorem, we establish the large sample properties of the SMIN (m, n)
+procedure under the stationary collapse hypothesis H1(2) , for different points e in the region
+of the explosive regime endpoint τ2 T.
+Theorem 2. Under H1(2) and assuming that {εt } satisfies the mixing conditions of
+Ferreira and Scotto (2002, p. 476), then as T → ∞:
+(a) If e = τ2 T − j with j = 0, ..., c and c finite,
+∗
+) = 0.
+lim Pr (Se,m,n < Smin
+
+T→∞
+
+(b) If e = τ2 T + j with j = 1, ..., n − 1,
+⎧
+(1 − δ2 )j > (1 + δ1 )j−n
+⎨0
+∗
+lim Pr (Se,m,n < Smin
+) = ∈ {0, 1} (1 − δ2 )j = (1 + δ1 )j−n .
+⎩
+T→∞
+1
+(1 − δ2 )j < (1 + δ1 )j−n
+(c) If e = τ2 T + n,
+
+∗
+) = 1.
+lim Pr (Se,m,n < Smin
+
+T→∞
+
+∗
+Part (a) of Theorem 2 shows that, asymptotically, Se,m,n will never fall below Smin
+within a finite region prior to the first observation in the stationary collapse regime
+(τ2 T + 1). Consequently, the SMIN (m, n) monitoring procedure will not indicate a
+collapse in this region earlier than it occurs. At the other extreme, part (c) demonstrates
+that, asymptotically under H1(2) , SMIN (m, n) will always signal a collapse by time period
+τ2 T + n, thereby ensuring detection of the collapse regime with a delay of no more
+than n − 1 periods. When n = 1, therefore, SMIN (m, n) guarantees collapse detection
+at exactly the first point of this regime. When n > 1, part (b) of Theorem 2 becomes
+relevant, and the result shows that SMIN (m, n) may indicate a collapse with a delay
+of less than n − 1 periods, depending on the magnitudes of δ1 and δ2 . For example,
+when n = 2, a collapse will be indicated with no delay (i.e. at time period τ2 T + j
+with j = 1) when (1 − δ2 ) < (1 + δ1 )−1 , but a one period delay will be induced when
+(1 − δ2 ) > (1 + δ1 )−1 , while either outcome is possible when (1 − δ2 ) = (1 + δ1 )−1 .2
+When n = 3, a collapse will be indicated with no delay (j = 1) if (1 − δ2 ) < (1 + δ1 )−2
+and a one period delay (j = 2) if (1 − δ2 )2 < (1 + δ1 )−1 .3
+In practice choices must be made for m and n. Setting n = 1 affords the opportunity
+of detecting a collapse most quickly, since (11) can signal the presence of a stationary
+collapse regime when the monitoring date is the very first observation of the collapse
+regime, while setting n > 1 would represent a more risk-averse strategy, reducing the
+chance of an outlying downward movement in yt during an ongoing explosive regime
+2 A sufficient condition for (1 − δ ) < (1 + δ )−1 is that δ > δ , i.e. that the stationary collapse offset is larger
+2
+1
+2
+1
+in magnitude than the explosive offset.
+3 A sufficient condition for (1 − δ ) < (1 + δ )−2 is that δ > 2δ .
+2
+1
+2
+1
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+spuriously triggering detection of a collapse. Such considerations are explored in the finite
+sample simulations of the next section.
+Note that the real-time monitoring methodology employed ensures that the SMIN (m, n)
+procedure is robust to conditional heteroskedasticity and serial correlation in εt , in line
+with the robustness properties of AMAX (k). The procedure will also be asymptotically
+robust to a finite number of volatility shifts that occur over the training or monitoring
+sample periods, since only a finite number of sub-sample statistics will have a variance
+standardization contaminated by variance changes, hence the effect on the procedure
+becomes asymptotically negligible.
+
+V. Simulation results
+To examine the finite sample performance of the SMIN (m, n)crash monitoring procedures,
+we consider a Monte Carlo simulation exercise with data generated by (1)-(2) which
+allows for a single explosive and collapse regime, with μ = 0 (without loss of generality)
+and εt ∼ IIDN(0, 1). We set u1 = 100 to ensure that, under H1(1) , we generate only positive
+explosive regimes. We evaluate the performance of SMIN (m, n) statistics computed for
+m = {5, 10, 15} and n = {1, 2, 3}, in each case using AMAX (k) test statistics for prior
+bubble detection, with k = {5, 10, 15}. We set the beginning of the monitoring period
+to T † = 200 such that the training sample end date is T ∗ = 200 − k throughout. Monte
+Carlo simulations are conducted using 10,000 replications in Gauss 20.
+First, we consider the empirical FPR of the SMIN (m, n) monitoring procedures when
+no stationary collapse regime is present. Figure 1 displays the cumulative rejection
+frequencies of the AMAX (k) and SMIN (m, n) procedures under no collapse scenarios.
+The cumulative rejection frequency of AMAX (k) at T is defined as the proportion of
+replications where we detect H1(1) at any point in the monitoring period up to and
+including T . The cumulative rejection frequency of SMIN (m, n) at T is defined as the
+proportion of replications where we detect H1(2) at any point in the monitoring period
+up to and including T .4 The cumulative rejection frequencies of AMAX (k) under H0(1)
+and of SMIN (m, n) under H0(1) or H0(2) represent the empirical FPRs for the procedures.
+Figure 1a–c considers the case of H0(1) where there is neither an explosive bubble nor
+stationary collapse such that τ1 = 1, while Figure 1d–l examines H0(2) where an explosive
+regime occurs and continues until the end of the monitoring period without stationary
+collapse. Beginning with the H0(1) case, it is apparent from Figure 1a–c that the empirical
+FPR of AMAX (k) tracks its theoretical FPR very closely, confirming the results of AHLST,
+while the empirical FPRs of the SMIN (m, n) procedures are always somewhat lower than
+this theoretical FPR for all combinations of m and n considered here. As discussed in
+section IV, under H0(1) the FPR of the SMIN (m, n) procedures should be bounded by the
+theoretical FPR for AMAX (k) and our simulation results demonstrate that this holds in finite
+samples.
+4 Another interpretation of the cumulative rejection frequency of S
+MIN (m, n) is the joint probability of AMAX (k)
+and SMIN (m, n) rejecting by a certain point in the monitoring period. Note though that the SMIN (m, n) procedure
+itself is conditional, in the sense that a rejection of H0(1) using AMAX (k) is required before the SMIN (m, n) procedure
+is ever applied.
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+492
+
+493
+
+(a)
+
+(b)
+
+(c)
+
+(d)
+
+(e)
+
+(f)
+
+(g)
+
+(h)
+
+(i)
+
+(j)
+
+(k)
+
+(l)
+
+FIGURE 1. Rejection frequencies of AMAX (k) and SMIN (m, n) under H0(1) and H0(2) . (a) m = k = 5; (b)
+m = k = 10; (c) m = k = 15; (d) m = k = 5; (e) m = k = 10; (f) m = k = 15; (g) m = k = 5; (h) m = k =
+10; (i) m = k = 15; (j) m = k = 5; (k) m = k = 10; (l) m = k = 15 [Colour figure can be viewed at
+wileyonlinelibrary.com]
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+In Figure 1d–f, we now consider the case of an explosive regime which begins at
+τ1 T = 210 and continues until the end of the monitoring period. The magnitude of
+the explosive regime is set to δ1 = 0.03. The empirical FPR of AMAX (k) now tracks
+the theoretical FPR closely until the beginning of the explosive regime, at which point
+empirical rejection frequencies increase substantially due to the detection of this regime.
+The empirical FPRs of the SMIN (m, n) procedures, however, lie close to zero throughout
+the monitoring period for all settings of m and n considered, suggesting a reassuring
+degree of FPR control for this bubble magnitude setting. A similar set of results is
+obtained in Figure 1g–i where we now consider a smaller magnitude explosive regime,
+setting δ1 = 0.02. In this case, the empirical FPR of the SMIN (m, 1) procedure increases
+slightly at the beginning of the explosive regime, before levelling off to a point below
+0.06 in the case of m = 5 and below 0.12 in the case of m = {10, 15}. As in the δ1 = 0.03
+case, the empirical FPRs of SMIN (m, 2) and SMIN (m, 3) lie close to zero throughout the
+monitoring period. Finally, turning our attention to Figure 1j–l, we now set δ1 = 0.01
+such that the magnitude of the explosive regime is smaller still. In this case, the empirical
+FPR of SMIN (m, 1) is seen to increase beyond the level seen previously, with this being
+particularly apparent for m = {10, 15} where high FPR levels are ultimately obtained.
+SMIN (m, 2) and SMIN (m, 3), however, display much lower empirical FPRs throughout the
+monitoring period. These latter procedures therefore offer a greater degree of FPR control
+relative to SMIN (m, 1).
+It is clear that the empirical FPRs of the SMIN (m, n) procedures are influenced by
+the magnitude of the explosive parameter. The closer the explosive offset is to zero, the
+higher the likelihood of negative changes in yt occurring during the explosive regime, and
+thus the higher the probability of rejection by SMIN (m, n). The relationship between the
+empirical FPR of SMIN (m, n) and δ1 is non-monotone, in the sense that the empirical FPR
+will be smaller in the case of δ1 = 0 and in the case of higher values of δ1 = 0, than for
+lower values of δ1 = 0. With reference to the statistics’ motivation in section IV, during
+the bubble regime, β̂ 1 is typically large and positive, hence even a modest negative β̂ 2
+can generate a large negative statistic and trigger crash detection. The potential for a high
+FPR in the presence of a small magnitude bubble is particularly acute for SMIN (m, 1) since
+only a one period decrease is needed to make β̂ 2 negative, an outcome that is potentially
+sufficient to trigger spurious detection of a crash. In contrast, the potential for spurious
+detection of a crash regime is substantially reduced by using SMIN (m, 2) or SMIN (m, 3),
+since, other things equal, β̂ 2 is less likely to be negative in the presence of only a one
+period decrease. The FPRs of these procedures are consequently less sensitive to the
+magnitude of the explosive regime.
+We now turn to examining the finite sample performance of our monitoring procedures
+under the alternative hypothesis, H1(2) , where the explosive regime is followed by a
+stationary collapse. Figures 2–6 report the cumulative rejection frequencies for the
+AMAX (k) and SMIN (m, n) procedures under this hypothesis, as well as histograms of crash
+detection dates obtained by SMIN (m, n), to allow us to evaluate both the power and crash
+timing properties of our procedures.5
+5
+As noted in section II, it is possible that when an explosive regime terminates it is followed by unit root behaviour
+rather than a collapse. While such a scenario is less common in practice, and as such is not the focus of this paper,
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+494
+
+495
+
+(a)
+
+(b)
+
+(c)
+
+(d)
+
+(e)
+
+(f)
+
+(g)
+
+(h)
+
+(i)
+
+(j)
+
+(k)
+
+(l)
+
+FIGURE 2. Rejection frequencies of AMAX (k) and SMIN (m, n), and histograms of SMIN (m, n) detection dates:
+τ1 T = 210, τ2 T = 220, τ3 T = 230, δ1 = 0.03 and δ2 = 0.015. (a) m = k = 5; (b) m = k = 10; (c)
+m = k = 15; (d) SMIN (5, 1); (e) SMIN (5, 2); (f) SMIN (5, 3); (g) SMIN (10, 1); (h) SMIN (10, 2); (i) SMIN (10, 3); (j)
+SMIN (15, 1); (k) SMIN (15, 2); (l) SMIN (15, 3) [Colour figure can be viewed at wileyonlinelibrary.com]
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+(a)
+
+(b)
+
+(c)
+
+(d)
+
+(e)
+
+(f)
+
+(g)
+
+(h)
+
+(i)
+
+(j)
+
+(k)
+
+(l)
+
+FIGURE 3. Rejection frequencies of AMAX (k) and SMIN (m, n), and histograms of SMIN (m, n) detection dates:
+τ1 T = 210, τ2 T = 220, τ3 T = 230, δ1 = 0.02 and δ2 = 0.01. (a) m = k = 5; (b) m = k = 10; (c)
+m = k = 15; (d) SMIN (5, 1); (e) SMIN (5, 2); (f) SMIN (5, 3); (g) SMIN (10, 1); (h) SMIN (10, 2); (i) SMIN (10, 3); (j)
+SMIN (15, 1); (k) SMIN (15, 2); (l) SMIN (15, 3) [Colour figure can be viewed at wileyonlinelibrary.com]
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+496
+
+497
+
+(a)
+
+(b)
+
+(c)
+
+(d)
+
+(e)
+
+(f)
+
+(g)
+
+(h)
+
+(i)
+
+(j)
+
+(k)
+
+(l)
+
+FIGURE 4. Rejection frequencies of AMAX (k) and SMIN (m, n), and histograms of SMIN (m, n) detection dates:
+τ1 T = 210, τ2 T = 225, τ3 T = 230, δ1 = 0.02 and δ2 = 0.01. (a) m = k = 5; (b) m = k = 10; (c)
+m = k = 15; (d) SMIN (5, 1); (e) SMIN (5, 2); (f) SMIN (5, 3); (g) SMIN (10, 1); (h) SMIN (10, 2); (i) SMIN (10, 3); (j)
+SMIN (15, 1); (k) SMIN (15, 2); (l) SMIN (15, 3) [Colour figure can be viewed at wileyonlinelibrary.com]
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+(a)
+
+(b)
+
+(c)
+
+(d)
+
+(e)
+
+(f)
+
+(g)
+
+(h)
+
+(i)
+
+(j)
+
+(k)
+
+(l)
+
+FIGURE 5. Rejection frequencies of AMAX (k) and SMIN (m, n), and histograms of SMIN (m, n) detection dates:
+τ1 T = 210, τ2 T = 225, τ3 T = 230, δ1 = 0.01 and δ2 = 0.005. (a) m = k = 5; (b) m = k = 10; (c)
+m = k = 15; (d) SMIN (5, 1); (e) SMIN (5, 2); (f) SMIN (5, 3); (g) SMIN (10, 1); (h) SMIN (10, 2); (i) SMIN (10, 3); (j)
+SMIN (15, 1); (k) SMIN (15, 2); (l) SMIN (15, 3) [Colour figure can be viewed at wileyonlinelibrary.com]
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+498
+
+499
+
+(a)
+
+(b)
+
+(c)
+
+(d)
+
+(e)
+
+(f)
+
+(g)
+
+(h)
+
+(i)
+
+(j)
+
+(k)
+
+(l)
+
+FIGURE 6. Rejection frequencies of AMAX (k) and SMIN (m, n), and histograms of SMIN (m, n) detection dates:
+τ1 T = 210, τ2 T = 220, τ3 T = 230, δ1 = 0.02 and δ2 = 0.03. (a) m = k = 5; (b) m = k = 10; (c)
+m = k = 15; (d) SMIN (5, 1); (e) SMIN (5, 2); (f) SMIN (5, 3); (g) SMIN (10, 1); (h) SMIN (10, 2); (i) SMIN (10, 3); (j)
+SMIN (15, 1); (k) SMIN (15, 2); (l) SMIN (15, 3) [Colour figure can be viewed at wileyonlinelibrary.com]
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+In Figures 2 and 3 we set τ1 T = 210, τ2 T = 220 and τ3 T = 230 such that both
+the explosive and stationary collapse regimes have a duration of 10 observations. We
+set the collapse magnitude to be half of the explosive magnitude such that δ2 = δ1 /2
+and consider ‘high’ magnitude settings of {δ1 , δ2 } = {0.03, 0.015} in Figure 2 and ‘low’
+magnitude settings of {δ1 , δ2 } = {0.02, 0.01} in Figure 3. Examining first Figure 2, we note
+that the SMIN (m, n) procedure achieves rejection frequencies of between approximately
+0.53 and 0.65 by the end of the collapse regime in the case of m = 5, whilst the rejection
+frequencies are very close to 1 in the case of m = 10 and m = 15, across all n. These
+rejection frequencies are close to or the same as AMAX (k), particularly in the case of
+m = 10 and m = 15, so that the collapse is detected in almost all cases where a bubble is
+found.
+While the rejection frequencies for bubble detection by AMAX (k) are increasing over
+the duration of the explosive regime, one key feature of SMIN (m, n) is that the majority
+of rejections occur at one point in time. In the case of SMIN (m, 1), this is the first
+observation of the collapse regime, whereas for SMIN (m, 2) and SMIN (m, 3) a one and two
+observation lag is introduced, respectively. To examine this in more detail, Figure 2d–l
+displays histograms of the date at which the SMIN (m, n) procedures detected the crash
+in each Monte Carlo replication where one was detected during the monitoring period.
+For example, comparing Figure 2d–f, it is clear that when a rejection is found by the
+SMIN (5, 1) procedure it is on the true crash date, τ2 T + 1, in almost all replications. This
+suggests that, in line with the theoretical results of section IV, our procedure is highly
+capable of real-time detection of crashes. For SMIN (5, 2) almost all rejections occur at
+τ2 T + 2, i.e. one observation after the true crash date, and for SMIN (5, 3) almost all
+occur at at τ2 T + 3, two observations after the true crash date. Hence the key asymptotic
+result that use of SMIN (m, n) gives rise to crash detection with a delay of at most n − 1
+periods is borne out in finite samples. Given that under H0(2) , use of n > 1 offers a greater
+degree of FPR control relative to using n = 1, a trade-off exists between the speed of
+possible crash detection and the probability of spuriously finding a crash in an ongoing
+bubble.
+Examining now the ‘low’ magnitude settings in Figure 3, our results are qualitatively
+similar to those discussed in the ‘high’ magnitude case. The lower magnitude explosive
+and stationary collapse regimes lead to a reduction in the cumulative rejection frequencies,
+as we would expect, with these reductions more noticeable in the case of m = 5. For
+m = 10 and m = 15 the rejection frequencies of SMIN (m, n) range from 0.85 to 0.92 under
+these settings, therefore still maintaining excellent power to detect a crash. The histograms
+in Figure 3d–l show that the immediate detection of a crash by SMIN (m, 1) and one or two
+observation lagged detection by SMIN (m, 2) and SMIN (m, 3) discussed previously holds for
+this lower magnitude setting.
+In Figures 4 and 5, we consider settings of τ1 T = 210, τ2 T = 225 and τ3 T = 230
+such that the explosive regime now lasts 15 observations and the collapse regime only
+five observations to examine the impact on our procedures of varying regime lengths.
+Again, we consider ‘high’ and ‘low’ magnitude settings for the explosive and stationary
+we note that in unreported simulations our SMIN (m, n) procedures can detect the termination of an explosive regime
+even when it is not followed by a collapse.
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+500
+
+501
+
+regimes. As the explosive regime is now longer in duration, our ‘high’ magnitude settings
+(reported in Figure 4) are the ‘low’ settings that we used previously to consider a 10
+observation explosive regime, namely {δ1 , δ2 } = {0.02, 0.01}. Figure 5 considers ‘low’
+magnitude settings of {δ1 , δ2 } = {0.01, 0.005}.
+Examining Figure 4, the results obtained are very similar to those discussed above, with
+moderate cumulative rejection frequencies in the case of m = 5 and very high frequencies
+in the cases of m = 10 and m = 15. As before, we see that setting n = 1 yields detection
+dates equal to the true crash date in the majority of replications, whereas setting n > 1
+leads to a n − 1 detection delay.
+Turning our attention now to Figure 5, we note that the cumulative rejection frequencies
+for SMIN (5, n) are low, while SMIN (10, n) and SMIN (15, n) offer much more promising
+crash detection levels with all settings of n offering reasonable rejection frequencies. We
+note, however, that under these settings the cumulative rejection frequencies of SMIN (m, 1)
+are quite high during the explosive regime, giving a further indication of a potential lack
+of good FPR control when n = 1. This behaviour mirrors that of the empirical FPR
+in Figure 1j–l that we discussed previously. Crucially, such behaviour is not observed
+for SMIN (m, 2) and SMIN (m, 3), with these procedures maintaining low spurious rejection
+frequencies throughout the explosive phase. To examine this behaviour further, consider
+the histogram of detected crash dates for SMIN (10, 1) in Figure 5g. While the majority
+of detections occur for this procedure at the true crash date, we observe that smaller
+numbers of false rejections arise at dates before the crash occurs. If we now consider the
+histogram of detected crash dates for SMIN (10, 2) in Figure 5h, the majority of these false
+rejections before the true crash date have been eliminated. Of course, the trade-off here is
+that detection of the crash occurs at τ2 T + 2 in the majority of replications such that we
+have introduced a one observation delay in detection.
+Finally, in Figure 6 we examine the case where the crash magnitude is a little larger than
+the explosive magnitude. We set τ1 T = 210, τ2 T = 220 and τ3 T = 230 as before,
+and now consider {δ1 , δ2 } = {0.02, 0.03} such that δ2 > δ1 . As discussed in section IV, an
+implication of Theorem 2 is that the SMIN (m, 2) procedure will asymptotically indicate a
+crash with no delay in this scenario. Figure 6e,h,k shows that the crash is detected at the true
+date in a number of cases, but the majority of detection dates remain one period late. This is
+perhaps to be expected in finite samples, since for these settings of δ1 and δ2 , the relevant
+inequality driving the theoretical result, (1 − δ2 ) < (1 + δ1 )−1 , is only just satisfied
+(0.97 < 0.98). For SMIN (m, 3), the results of Theorem 2 indicate that crash detection
+should occur with a one period delay asymptotically, since (1 − δ2 ) > (1 + δ1 )−2 but
+(1 − δ2 )2 < (1 + δ1 )−1 . Figure 6f,i,l demonstrates that SMIN (m, 3) does detect the crash
+with a one period delay in a substantial number of cases, with the remainder of detections
+obtained with a two-period delay.
+The results of this section demonstrate that our SMIN (m, n) monitoring procedure is able
+to detect a crash with a high degree of power either at or very close to the date at which the
+crash occurs for the vast majority of settings considered here. In general, setting m = 10 or
+m = 15 yields higher rejection frequencies than m = 5. Comparing m = 10 and m = 15,
+we observe a slight advantage for the SMIN (m, n) procedure where the value of m matches
+the length of the explosive regime. This is more evident in the ‘low’ magnitude settings for
+the explosive and stationary regimes than the ‘high’ magnitude settings. In practice, we
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+will not know the length of any explosive regime at the point that we begin monitoring for
+its crash. We suggest, based on the simulation results shown here, that selecting m = 10
+will be suitable for many scenarios and we use this setting in what follows. We have also
+demonstrated how the flexibility in the procedure’s construction allows a practitioner to
+prioritise their monitoring preferences. Immediate detection of a crash is clearly important
+for policy makers, allowing them to react to changes in market conditions as they occur.
+Our results demonstrate that setting n = 1 allows for the immediate detection of a crash.
+However, as observed in Figure 5, when the magnitude of an explosive process is small,
+downwards movement in the series during the explosive phase could potentially trigger
+false crash detection. In some contexts, any decline in prices will be of interest, but to
+others this feature may be less desirable. Our results demonstrate that setting n > 1 reduces
+the probability of these pre-emptive crash detections occurring, with the obvious trade-off
+that when crashes do occur they may be detected with a delay of up to n − 1 observations.
+Of course, depending on the practitioner’s motivations, even more risk-averse approaches
+to crash detection than the n = {2, 3} procedures we considered in this section could be
+implemented. However our results show that introducing just a one observation delay is
+sufficient to eliminate the majority of false detections that arise in situations where the
+explosive bubble is small in magnitude. Given this, we suggest that setting n = 2 will be
+suitable for many scenarios, but with practitioners retaining the flexibility to adjust this
+parameter to suit their preferences and the particular monitoring context.
+
+VI. Monitoring for multiple bubble and crash regimes
+The testing approach outlined in sections III and IV concerns monitoring for a single
+bubble and crash episode. However, it may be the case that once a crash has been detected,
+rather than ending the monitoring exercise, a practitioner wishes to continue monitoring
+for subsequent bubble episodes. In this section we consider how the testing approach
+outlined in this paper could be extended to deal with monitoring for multiple bubbles and
+crashes. Consider the following multiple bubble and crash DGP in which we allow for
+j = 1, ..., N explosive bubble and stationary collapse regimes. For t = 1, ..., T:
+y t = μ + x t + ut ,
+
+
+
+
+ut = (1 + δt )ut−1 + εt + u1 I t = τj,3 T + 1
+δt =
+
+N 
+
+δj,1 I
+
+j=1
+
+− δj,2 I
+N
+
+xt =
+
+
+
+
+
+
+
+(12)
+(13)
+
+
+
+
+τj,1 T < t ⩽ τj,2 T
+
+
+
+
+
+
+
+
+τj,2 T < t ⩽ τj,3 T
+− I t = τj,3 T + 1
+
+
+
+
+uτj,3 T  − u1 I t > τj,3 T ,
+
+j=1
+
+with, as before, u1 = Op (1), δj,1 > 0 and δj,2 > 0 for all j. The inclusion of xt in (12) and
+the indicator function term in (13) prevents the magnitude of one explosive regime from
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+502
+
+503
+
+entering the dynamics of subsequent explosive regimes; this DGP represents a simple
+modification of that adopted in Harvey, Leybourne, and Whitehouse (2020), here allowing
+for non-zero u1 . Under
+yt can undergo N explosive bubble phases with
+ specification,
+
+ this
+and N stationary crash regimes
+start and end dates τj,1 T + 1 and τj,2 T , respectively,
+
+with start and end dates τj,2 T + 1 and τj,3 T , respectively, for j = 1, ..., N.
+In order to distinguish between explosive bubble and stationary collapse regimes in
+this multiple bubble context, our hypotheses of interest become:
+(1)
+: τj,1 = 1
+(unit root)
+H0,j
+(1)
+H1,j : τj,1 < τj,2 ≤ 1 (unit root then explosive, with or without stationary collapse),
+
+and
+(2)
+H0,j
+: τj,1 < τj,2 = 1 (unit root then explosive without stationary collapse)
+(2)
+H1,j : τj,1 < τj,2 < 1 (unit root then explosive with stationary collapse).
+
+Consider the simple case of N = 2 where τj,1 < τj,2 < τj,3 < 1 for j = 1, 2 such that there
+exist two explosive bubble regimes, each followed by a stationary collapse. Following the
+(1)
+and subsequently
+detection of the first bubble and crash regime through rejection of H0,1
+(2)
+(2)
+H0,1 in favour of H1,1 , we should then switch back into monitoring for the second
+(1)
+.
+explosive bubble regime by considering H0,2
+A question that arises in this situation is whether we want to begin monitoring for the
+next explosive bubble immediately upon detection of a crash, given that the stationary
+collapse is likely to be still ongoing. To mitigate against possible problems associated with
+bubble monitoring resuming during a crash regime, we impose a minimum window width
+gap between the detection of a stationary collapse regime and the start of monitoring for a
+subsequent explosive bubble. A natural candidate for this minimum window here would
+be k.
+Our multiple bubble and crash monitoring decision rules can therefore be written as
+follows. First, explosive bubble monitoring is undertaken using AMAX (k):
+(1)
+at time e if Ae,k > A∗max .
+Detect H1,j
+
+If an explosive bubble is detected, we denote the detection date as Tj . Next, stationary
+collapse monitoring is undertaken over e ∈ [Tj + 1, T] using SMIN (m, n):
+(2)
+∗
+Detect H1,j
+at time e if Se,m,n < Smin
+.
+
+The date of stationary collapse detection is denoted Tj . Monitoring for a subsequent
+explosive bubble is then undertaken over e ∈ [Tj + k, T] using AMAX (k):
+(1)
+Detect H1,j+1
+at time e if Ae,k > A∗max .
+
+Monitoring continues in this manner, switching between AMAX (k) and SMIN (m, n) for as
+long as desired.
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+FIGURE 7. Rejection frequencies of AMAX (10) and SMIN (10, 2) for multiple bubble and crash episodes:
+τj,1 = 1 [Colour figure can be viewed at wileyonlinelibrary.com]
+
+We consider the performance of our proposed multiple bubble and crash monitoring
+procedure through Monte Carlo simulation of (12), where we again use εt ∼ IIDN(0, 1)
+and set μ = 0 and u1 = 100. Given the finite sample performance of our monitoring
+procedure in the single bubble context displayed in section V, we provide results for the
+AMAX (10) and SMIN (10, 2) procedures here. We set T ∗ = 200 − k.
+Figure 7 displays the empirical FPRs of the AMAX (10) and SMIN (10, 2) procedures
+(1)
+under H0,1
+, i.e. with τ1,1 = 1. The empirical FPRs of AMAX (10) and SMIN (10, 2) for one
+explosive and collapse regime will be identical to those discussed in the single bubble
+case, displayed in Figure 1. However, in a multiple bubble context, we now wish to
+consider the empirical FPRs displayed for subsequent bubble regimes. That is, we wish
+to consider the probability of our procedures falsely detecting more than one bubble and
+crash regime. We display the empirical FPRs for detecting one, two and three bubble
+and crash regimes. It is clear from Figure 7 that the empirical FPRs of AMAX (10) and
+SMIN (10, 2) for two bubbles/crashes remain small throughout the monitoring period, while
+the empirical FPRs for three bubbles/crashes are near zero throughout the monitoring
+period. Given the conditional nature of our multiple bubble procedure, i.e. that we do not
+monitor for a (j + 1)th bubble unless we have detected a collapse of bubble j, this should
+not be surprising.
+Figure 8 displays the cumulative rejection frequencies of the AMAX (10)
+and SMIN (10, 2) procedures for multiple bubble and collapse regimes,
+{τ2,1 T, τ2,2 T, τ2,3 T} =
+where
+{τ1,1 T, τ1,2 T, τ1,3 T} = {215,225, 235},
+{255,265, 275}, and {τ3,1 T, τ3,2 T, τ3,3 T} = {295,305, 315}. That is, the DGP
+contains three explosive bubble and stationary crash regimes, with the bubble and
+crash phases for each regime lasting 10 observations. In Figure 8a we set δj,1 = 0.03
+and δj,2 = 0.015 for j = 1, .., 3, such that each explosive bubble (and each stationary
+crash) is of the same magnitude. It is clear that our proposed procedures have excellent
+power to detect multiple bubble and crash regimes under these settings, with cumulative
+rejection frequencies close to 1 for each regime. The speed of detection matches that
+observed in the single bubble case, with the SMIN (10, 2) detection date being equal to the
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+504
+
+505
+
+(a)
+
+(b)
+
+FIGURE 8. Rejection frequencies of AMAX (10) and SMIN (10, 2) for multiple bubble and
+crash episodes: {τ1,1 T, τ1,2 T, τ1,3 T} = {215,225, 235}, {τ2,1 T, τ2,2 T, τ2,3 T} = {255,265, 275},
+{τ3,1 T, τ3,2 T, τ3,3 T} = {295,305, 315}. (a) δj,1 = 0.03 and δj,2 = 0.015; (b) δj,1 = 0.02 and δj,2 = 0.01
+[Colour figure can be viewed at wileyonlinelibrary.com]
+
+second observation of the stationary collapse regime in most replications. In Figure 8b
+we consider smaller settings of δj,1 = 0.02 and δj,2 = 0.01 for j = 1, .., 3. Under these
+settings, the conditional nature of the testing approach becomes more obvious, as we
+observe slightly lower cumulative rejection frequencies for later bubble/crash regimes
+relative to earlier regimes. However, our proposed procedures still obtain very good levels
+of power for multiple regimes under these settings. We have therefore demonstrated in
+this section that the procedures proposed in this paper for real-time monitoring of a crash
+extend simply to a multiple bubble monitoring context.
+
+VII. Empirical application
+To demonstrate the effectiveness of our crash monitoring procedure, we consider an
+empirical application of the AMAX (10) and SMIN (10, n)procedures to the US housing
+market. The sub-prime mortgage crisis and subsequent financial distress of the late 2000s
+has led to increased scrutiny of the dynamics of house prices. Several recent studies
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+have investigated historical bubble behaviour in housing markets (see, inter alia, Pavlidis
+et al., 2016; Anundsen et al., 2016; Anundsen ,2019; Fabozzi et al., 2020). In a recent
+study, Harvey et al. (2020) propose a method of date-stamping multiple bubble and crash
+regimes based on Bayesian Information Criterion model selection and use this technique to
+investigate the dynamics of the housing market in 20 OECD countries, finding substantial
+evidence of both bubbles and crashes across many countries, including the US. While
+there is now a consensus that the US housing market underwent a bubble during the
+2000s, at the time the issue was contested. Addressing the Joint Economic Committee
+of the US Congress in 2002, Federal Reserve Chairman Alan Greenspan remarked that a
+comparison of house prices to the bubble and crash behaviour observed in stock markets
+was not appropriate due to the high transaction costs and limited arbitrage opportunities
+in housing. He also stated that, instead of a national market, US housing could be seen
+as a collection of local markets, such that ‘even if a bubble were to develop in a local
+market, it would not necessarily have implications for the nation as a whole’ (Monetary
+Policy and the Economic Outlook, 2002). Real-time monitoring techniques such as the
+one proposed in this paper could have provided evidence of changes in the dynamics of
+the housing market and allowed policy makers to respond quickly to these events.
+We consider a pseudo-real-time monitoring exercise of the US housing market. As
+discussed in section I, a rational bubble manifests itself as the presence of explosive
+behaviour in asset prices with the absence of explosive behaviour in the corresponding
+fundamental values. We therefore examine a price to fundamental ratio for housing, using
+rent as our proxy of housing fundamentals, as is common in the literature (see Pavlidis
+et al., 2016, for example). A quarterly house price to rent ratio is obtained from the
+OECD (OECD, 2021) for the period 1975:Q4 - 2021:Q1, yielding T = 182observations.
+We begin monitoring for an explosive bubble in 1998:Q1. We select window widths of
+length k = 10 and m = 10, such that our preferred AMAX (10) and SMIN (10, n) tests are
+used. This provides us with a training sample of T ∗ = 80 observations over which our
+training statistics are computed from t = 1, ..., T ∗ .
+Figure 9 displays the US house price to rent ratio in the first panel and the computed
+SMIN (10, 1), SMIN (10, 2), and SMIN (10, 3) test statistics in the second panel. We examine
+the monitoring performance of all three crash procedures here to demonstrate the tradeoffs of choosing n > 1 in terms of speed of detection. We begin by monitoring for an
+explosive bubble using AMAX (10), which detects the presence of a bubble in 2000:Q1,
+pre-dating Greenspan’s remarks by 2 years. The theoretical FPR of AMAX (10) is 0.11 at
+the point of detection. At this point, we switch into crash monitoring using the SMIN (10, 1),
+SMIN (10, 2) and SMIN (10, 3) procedures. SMIN (10, 1) detects a crash in 2006:Q2, whilst
+both SMIN (10, 2) and SMIN (10, 3) detect a crash in 2006:Q3. The effect of increasing n
+in the SMIN (10, n) monitoring procedure mirrors our theoretical and simulation results,
+with n > 1 introducing a delay in detection of n − 1observations or fewer. We note that
+the detection delay is one observation for both SMIN (10, 2) and SMIN (10, 3) here. Visual
+inspection of the full sample of the US house price to rent ratio (which would, of course, not
+have been possible were we doing this in real time) shows that the crash date indicated by
+SMIN (10, 1) corresponds to the first observation after the explosive bubble where the ratio
+begins to decline before it substantially decreases throughout 2007 and 2008, therefore
+suggesting that the monitoring procedure has worked very well. In October 2007, over a
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+506
+
+507
+
+FIGURE 9. US house price to rent ratio and SMIN (m, n) test statistics, 1975–2021 [Colour figure can be
+viewed at wileyonlinelibrary.com]
+
+year after the detection of a crash by SMIN (10, 1), Treasury Secretary Henry Paulson stated
+that the continuing decline in house prices marked the ‘most significant current risk to [the
+US] economy’ (U.S. Department of the Treasury, 2007). Our application demonstrates
+that our proposed monitoring procedures can be used to detect bubble and crash behaviour
+in macroeconomic or financial data in real time, and this in turn can allow policy makers
+to respond quickly to such events.
+
+VIII. Conclusion
+In this paper, we have developed a real-time monitoring procedure for detecting a crash
+episode in a time series, conditional on having first detected a bubble regime. Our
+proposed procedure makes use of a training period, over which no bubble or crash occurs,
+to calibrate critical values, and then proceeds to monitor for significant evidence of a
+crash in a real-time environment as new data emerges. The new statistic we use for crash
+detection is based on an autoregressive modelling framework, with bubble and crash
+regimes modelled by explosive and stationary autoregressive dynamics, respectively. The
+statistic exploits the different signs of the means of the first differences associated with
+explosive and stationary regimes. A user-chosen parameter allows practitioners to trade
+off the speed of possible crash detection with the probability of spurious crash detection
+during a bubble regime. Asymptotic results establish that our procedure has desirable
+properties in terms of its ability to rapidly indicate the onset of a crash. Our Monte Carlo
+simulations suggest that, in finite samples, the recommended crash monitoring procedure
+has a well-controlled FPR during a bubble phase, while also allowing rapid detection of
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+a crash when one occurs. We have also considered how our procedure can be extended
+to a multiple bubble and crash environment, and demonstrate through simulation that the
+extended procedure performs well in this more general context. An application to the
+US housing market demonstrated the efficacy of our procedure in rapidly detecting the
+housing price crash which occurred in 2006.
+
+Appendix A: Proof of Theorem 1
+We first note that Ae,k is a measurable function of a finite number of observations
+on yt , and that under H0(1) , yt = εt . It then follows that {Ae,k } is a strictly stationary
+sequence and, from lemma 2.1 of White and Domowitz (1984), it is mixing of the same
+size as {εt }. Theorem 1 assumes that the mixing conditions of {εt }, and hence {Ae,k },
+satisfy the mixing (long range dependence) conditions of Ferreira and Scotto (2002) (see
+Definition on p. 476). Hence the conditions underpinning the result in theorem 2.1 of
+Ferreira and Scotto (2002) are satisfied for the sequence {Ae,k }. Theorem 2.1 of Ferreira
+and Scotto (2002) for the case r = s = 1 (in their notation) then implies that, for two
+disjoint subintervals IT,a and IT,b of [1, T], with respective lengths aT and bT such that
+aT /T → a and bT /T → b,
+
+b
+,
+lim P max Ae,k ≤ max Ae,k =
+T→∞
+e∈IT,a
+e∈IT,b
+a+b
+
+
+or
+
+lim P max Ae,k > max Ae,k
+
+T→∞
+
+e∈IT,a
+
+e∈IT,b
+
+=
+
+a
+.
+a+b
+
+Setting IT,a = [T ∗ + k, T ] and IT,b = [k + 1, T ∗ ] we obtain
+
+
+T − T∗ − k + 1
+lim P
+max Ae,k > max ∗ Ae,k = lim
+T→∞
+T→∞
+e∈[k+1,T ]
+T − 2k + 1
+e∈[T ∗ +k,T ]
+
+T − T∗
+= lim
+T→∞
+T
+= α.
+
+Appendix B: Proof of Theorem 2
+First we define DT = τ1 T(1 + δ1 )2(τ2 T−τ1 T) . In the proof we will make use of the
+following results:
+(i) For any process xt , an application of the Cauchy–Schwarz inequality shows that
+
+( bt=a xt )2
+b 2 ≤ b − a,
+t=a xt
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+508
+
+509
+
+and hence, with finite b − a,
+b
+xt
+= Op (1).
+t=a
+b
+2
+x
+t=a t
+
+(B1)
+
+(ii) For an AR(1) process xs with generic parameter 1 + δ and innovation εs , for
+s, k > 0, we can write
+s+k−1
+
+xs+k = (1 + δ)k xs +
+
+(1 + δ)j εs+k−j ,
+
+(B2)
+
+(1 + δ)−k+j εs−j .
+
+(B3)
+
+j=0
+k−1
+−k
+
+xs−k = (1 + δ) xs −
+j=0
+
+We next examine the behaviour of ut in the region of t = τ2 T. First, for t = τ2 T
+we use (B2) with s + k = τ2 T and k = τ2 T − τ1 T to give
+uτ2 T = (1 + δ1 )τ2 T−τ1 T uτ1 T +
+
+τ2 T−τ1 T−1
+
+(1 + δ1 )j ετ2 T−j ,
+j=0
+
+−1/2
+−1/2
+DT uτ2 T = DT (1 + δ1 )τ2 T−τ1 T uτ1 T + Op (T −1/2 )
+= O+
+p (1),
+1/2
+since uτ1 T = O+
+). Hence, uτ2 T = O+
+p (T
+p (DT ). Second, consider t < τ2 T. Using
+(B3) we have
+1/2
+
+uτ2 T−k = (1 + δ1 )−k uτ2 T + Op (1)
+= (1 + δ1 )−k O+
+p (DT ).
+1/2
+
+Finally, for t > τ2 T, using (B2) we find
+uτ2 T+k = (1 − δ2 )k uτ2 T + Op (1)
+= (1 + δ2 )k O+
+p (DT ).
+1/2
+
+Now consider the behaviour of Se,m,n in the region of t = τ2 T, for the three cases of
+theorem 2.
+(a) Consider the case of j = 0, i.e. e = τ2 T. Then
+τ2 T−n
+
+e−n
+
+yt =
+t=e−n−m+1
+
+yt
+t=τ2 T−n−m+1
+
+= uτ2 T−n − uτ2 T−n−m
+= ((1 + δ1 )−n − (1 + δ1 )−n−m )uτ2 T + Op (1),
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+using (B3). Here (1 + δ1 )−n − (1 + δ1 )−n−m > 0 so
+e−n
+
+yt = O+
+p (DT ).
+1/2
+
+t=e−n−m+1
+
+Similarly,
+τ2 T
+
+e
+
+yt =
+t=e−n+1
+
+yt
+t=τ2 T−n+1
+
+= uτ2 T − uτ2 T−n
+= (1 − (1 + δ1 )−n )uτ2 T + Op (1).
+Here 1 − (1 + δ1 )−n > 0 so
+e
+
+yt = O+
+p (DT ).
+1/2
+
+t=e−n+1
+
+Next, since the data is generated according to yt = δ1 (yt−1 − μ) + εt = −δ1 μ +
+δ1 yt−1 + εt , a linear regression of yt on a constant and yt−1 represents
+τ2 T−n a correctly
+specified estimating model. Standard OLS results then imply that t=τ2 T−n−m+1 ε̂ 2t =
+τ2 T−n
+2
+t=τ2 T−n−m+1 εt + Op (1) = Op (1). Hence we find
+e−n
+
+t=e−n−m+1 yt
+
+Se,m,n = 
+
+e−n
+2
+t=e−n−m+1 ε̂ t
+
+e
+× t=e−n+1
+
+yt
+
+e
+2
+t=e−n+1 yt
+
+O+
+p (DT )
+× O+
+= 
+p (1)
+Op (1)
+1/2
+
+= O+
+p (DT ),
+1/2
+
+1/2
+
+using (B1). Therefore we see that Se,m,n is diverging to +∞ at the rate DT . For
+j = 1, 2, ..., c, the yt involved in Se,m,n have the same order properties as when j = 0.
+1/2
+Hence it also follows that Se,m,n = O+
+p (DT ) for e = τ2 T − 1, τ2 T − 2, ..., τ2 T − c.
+∗
+The result of Theorem 2(a) then follows since Smin
+is the minimum of a sequence of
+Op (1) variates (given that Se,m,n = Op (1) over the unit root training period), and therefore
+1/2
+∗
+Smin
+= op (DT ).
+(b) Consider e = τ2 T + j with j = 1, ..., n − 1. It remains true that
+e−n
+
+yt = O+
+p (DT ),
+1/2
+
+t=e−n−m+1
+e−n
+
+ε̂ 2t = Op (1).
+t=e−n−m+1
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+510
+
+511
+
+Now,
+τ2 T+j
+
+e
+
+yt =
+t=e−n+1
+
+yt
+t=τ2 T+j−n+1
+
+= uτ2 T+j − uτ2 T+j−n
+= (1 − δ2 )j uτ2 T − (1 + δ1 )j−n uτ2 T + Op (1)
+= ((1 − δ2 )j − (1 + δ1 )j−n )uτ2 T + Op (1),
+so
+e
+
+yt =
+t=e−n+1
+
+j
+j−n
+((1 − δ2 )j − (1 + δ1 )j−n )O+
+p (DT ) (1 − δ2 ) = (1 + δ1 )
+,
+j
+Op (1)
+(1 − δ2 ) = (1 + δ1 )j−n
+1/2
+
+and therefore
+⎧ +
+1/2
+⎨Op (1) (1 − δ2 )j > (1 + δ1 )j−n
+O+
+(D
+)
+p
+T
+Se,m,n = 
+× Op (1) (1 − δ2 )j = (1 + δ1 )j−n
+⎩ −
+Op (1)
+Op (1) (1 − δ2 )j < (1 + δ1 )j−n
+⎧
+1/2
++
+j
+j−n
+⎪
+⎨Op (DT ) (1 − δ2 ) > (1 + δ1 )
+1/2
+= Op (DT ) (1 − δ2 )j = (1 + δ1 )j−n .
+⎪
+⎩O− (D1/2 ) (1 − δ )j < (1 + δ )j−n
+2
+1
+p
+T
+∗
+= op (DT ), the result of Theorem 2(b) then follows directly.
+Given Smin
+(c) Consider e = τ2 T + n. Once again,
+1/2
+
+e−n
+
+yt = O+
+p (DT ),
+1/2
+
+t=e−n−m+1
+e−n
+
+ε̂ 2t = Op (1).
+t=e−n−m+1
+
+Now,
+e
+
+yt =
+
+t = τ2 T + 1τ2 T+n yt
+
+t=e−n+1
+
+= uτ2 T+n − uτ2 T
+= (1 − δ2 )n uτ2 T − uτ2 T + Op (1)
+= ((1 − δ2 )n − 1)uτ2 T + Op (1).
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+Bulletin
+
+Here, (1 − δ2 )n − 1 < 0 so
+O+
+p (DT )
+Se,m,n = 
+× O−
+p (1)
+Op (1)
+1/2
+
+= O−
+p (DT )
+1/2
+
+and the result in Theorem 2(c) follows.
+Final Manuscript Received: July 2021
+
+References
+Andrews, D. W. K. (2003). ‘End-of-sample instability tests’, Econometrica, Vol. 71, pp. 1661–1694.
+Andrews, D. W. K. and Kim, J.-Y. (2006). ‘Tests for cointegration breakdown over a short time period’,
+Journal of Business and Economic Statistics, Vol. 24, pp. 379–394.
+Anundsen, A. K. (2019). ‘Detecting imbalances in house prices: what goes up must come down?’, The
+Scandinavian Journal of Economics., Vol. 121, pp. 1587–1619.
+Anundsen, A. K., Gerdrup, K., Hansen, F. and Kragh-Sorensen, K. (2016). ‘Bubbles and crises: the role of
+house prices and credit’, Journal of Applied Econometrics, Vol. 31, pp. 1291–1311.
+Astill, S., Harvey, D. I., Leybourne, S. J. and Taylor, A. M. R. (2017). ‘Tests for an end-of-sample bubble in
+financial time series’, Econometric Reviews, Vol. 36, pp. 651–666.
+Astill, S., Harvey, D. I., Leybourne, S. J., Sollis, R. and Taylor, A. M. R. (2018). ‘Real-time monitoring for
+explosive financial bubbles’, Journal of Time Series Analysis, Vol. 39, pp. 863–891.
+Basse, T., Klein, T., Vigne, S. A. and Wegener, C. (2021). ‘U.S. stock prices and the dot-com bubble: can
+dividend policy rescue the efficient market hypothesis?’, Journal of Corporate Finance, Vol. 67, 101892.
+Caspi, I. and Graham, M. (2018). ‘Testing for bubbles in stock markets with irregular dividend distribution’,
+Finance Research Letters, Vol. 26, pp. 89–94.
+Corbet, S., Lucey, B. and Yarovaya, L. (2018). ‘Datestamping the Bitcoin and Ethereum bubbles’, Finance
+Research Letters, Vol. 26, pp. 81–88.
+Etienne, X. L., Irwin, S. H. and Garcia, P. (2014). ‘Bubbles in food commodity markets: four decades of
+evidence’, Journal of International Money and Finance, Vol. 42, pp. 129–155.
+Etienne, X. L., Irwin, S. H. and Garcia, P. (2015). ‘Price explosiveness, speculation, and grain futures prices’,
+American Journal of Agricultural Economics, Vol. 97, pp. 65–87.
+Fabozzi, F. J., Kynigakis, I., Panopoulou, E. and Tunaru, R. S. (2020). ‘Detecting bubbles in the US and UK
+real estate markets’, The Journal of Real Estate Finance and Economics, Vol. 60, pp. 469–513.
+Ferreira, H. and Scotto, M. (2002). ‘On the asymptotic location of high values of a stationary sequence’,
+Statistics and Probability Letters, Vol. 60, pp. 475–482.
+Figuerola-Ferretti, I. and McCrorie, J. (2016). ‘The shine of precious metals around the global financial crisis’,
+Journal of Empirical Finance, Vol. 38, pp. 717–738.
+Gronwald, M. (2021). ‘How explosive are cryptocurrency prices?’, Finance Research Letters, Vol. 38,
+101603.
+Harvey, D. I., Leybourne, S. J., Sollis, R. and Taylor, A. R. (2016). ‘Tests for explosive financial bubbles in
+the presence of non-stationary volatility’, Journal of Empirical Finance, Vol. 38, pp. 548–574.
+Harvey, D. I., Leybourne, S. J. and Sollis, R. (2017). ‘Improving the accuracy of asset price bubble start and
+end date estimators’, Journal of Empirical Finance, Vol. 40, pp. 121–138.
+Harvey, D., Leybourne, S. and Whitehouse, E. (2020). ‘Date-stamping multiple bubble regimes’, Journal of
+Empirical Finance, Vol. 58, pp. 226–246.
+Homm, U. and Breitung, J. (2012). ‘Testing for speculative bubbles in stock markets: a comparison of
+alternative methods’, Journal of Financial Econometrics, Vol. 10, pp. 198–231.
+Hu, Y. and Oxley, L. (2018). ‘Do 18th century ‘bubbles’ survive the scrutiny of 21st century time series
+econometrics?’, Economics Letters, Vol. 162, pp. 131–134.
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+512
+
+513
+
+Monetary Policy and the Economic Outlook. (2002). Hearing before the Joint Economic Committee, Congress
+of the United States (testimony of Alan Greenspan). 107th Cong, April 17.
+OECD. (2021). Housing Prices (indicator). https://doi.org/10.1787/63008438-en.
+Pavlidis, E., Yusupova, A., Paya, I., Peel, D., Martinez-Garcia, E., Mack, A. and Grossman, A. (2016).
+‘Episodes of exuberance in housing markets: in search of the smoking gun’, Journal of Real Estate Finance
+and Economics, Vol. 53, pp. 419–449.
+Pavlidis, E. G., Paya, I. and Peel, D. A. (2018). ‘Using market expectations to test for speculative bubbles in
+the crude oil market’, Journal of Money, Credit and Banking, Vol. 50, pp. 833–856.
+Phillips, P. C. B. and Shi, S. (2018). ‘Financial bubble implosion and reverse regression’, Econometric Theory,
+Vol. 34, pp. 705–753.
+Phillips, P. C. B. and Shi, S. (2020). ‘Real time monitoring of asset markets: Bubbles and crises’, in Vinod
+H. D. and Rao C. (eds), Handbook of Statistics, Vol. 42, Elsevier, Amsterdam, pp. 61–80.
+Phillips, P. C. B., Wu, Y. and Yu, J. (2011). ‘Explosive behavior in the 1990s NASDAQ: when did exuberance
+escalate asset values?’, International Economic Review, Vol. 52, pp. 201–226.
+Phillips, P. C. B., Shi, S. and Yu, J. (2015). ‘Testing for multiple bubbles: historical episodes of exuberance
+and collapse in the S&P 500’, International Economic Review, Vol. 56, pp. 1043–1078.
+U.S. Department of the Treasury. (2007). Remarks by Secretary Henry M. Paulson, Jr. on Current Housing
+and Mortgage Market Developments, Georgetown University Law Center. https://home.treasury.gov/news/
+press-releases/hp612.
+White, H. and Domowitz, I. (1984). ‘Nonlinear regression with dependent observations’, Econometrica, Vol.
+52, pp. 143–162.
+Whitehouse, E. J. (2019). ‘Explosive asset price bubble detection with unknown bubble length and initial
+condition’, Oxford Bulletin of Economics and Statistics, Vol. 81, pp. 20–41.
+
+© 2023 The Authors. Oxford Bulletin of Economics and Statistics published by Oxford University and John Wiley & Sons Ltd.
+
+14680084, 2023, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/obes.12540 by Ching-Chuan Tsong - Readcube-Labtiva , Wiley Online Library on [11/07/2025]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Real-time monitoring of bubbles and crashes
+
+
